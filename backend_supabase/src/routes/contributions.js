@@ -14,7 +14,7 @@ router.get("/achievements", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("achievements")
-      .select("id, created_at")
+      .select("id, date")
       .eq("student_id", regNo);
 
     if (error) throw error;
@@ -26,7 +26,7 @@ router.get("/achievements", async (req, res) => {
     }));
 
     data.forEach((a) => {
-      const d = new Date(a.created_at);
+      const d = new Date(a.date);
       if (d.getFullYear() == year) {
         months[d.getMonth()].count += 1;
       }
@@ -55,26 +55,26 @@ router.get("/research-internship", async (req, res) => {
     // Fetch research submissions
     const { data: research, error: rErr } = await supabase
       .from("research_submissions")
-      .select("created_at")
+      .select("date_of_publication")
       .eq("student_id", regNo);
 
     if (rErr) console.log("Research error:", rErr);
 
     research?.forEach((row) => {
-      const d = new Date(row.created_at);
+      const d = new Date(row.date_of_publication);
       if (d.getFullYear() == year) months[d.getMonth()].researchCount += 1;
     });
 
     // Fetch internship submissions
     const { data: intern, error: iErr } = await supabase
       .from("internship_submissions")
-      .select("created_at")
+      .select("start_date")
       .eq("student_id", regNo);
 
     if (iErr) console.log("Internship error:", iErr);
 
     intern?.forEach((row) => {
-      const d = new Date(row.created_at);
+      const d = new Date(row.start_date);
       if (d.getFullYear() == year) months[d.getMonth()].internshipCount += 1;
     });
 
