@@ -11,7 +11,16 @@ const teacherRoutes = require("./src/routes/teacher");
 
 const app = express();
 
-app.use(cors());
+// --- FIX 1: CORS Configuration ---
+// Allow requests from your local development environment and your Vercel production domain
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // Your local frontend dev port
+    "https://edu-grade-in.vercel.app" // YOUR LIVE VERCEL URL
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // MOUNT ROUTES PROPERLY
@@ -25,5 +34,8 @@ app.get("/", (req, res) => {
   res.send("Backend running...");
 });
 
-const PORT = 4000;
+// --- FIX 2: Port Configuration ---
+// Use the port assigned by the hosting service (process.env.PORT) or fallback to 4000 locally.
+const PORT = process.env.PORT || 4000;
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
