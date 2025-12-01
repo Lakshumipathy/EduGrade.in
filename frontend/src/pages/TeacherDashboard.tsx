@@ -20,7 +20,7 @@ export default function TeacherDashboard() {
 
   const [selectedSemester, setSelectedSemester] = useState("");
 
-  const BACKEND_BASE = "http://localhost:4000";
+  const BACKEND_BASE = "https://edugrade-in.onrender.com";
 
   useEffect(() => {
     const stored = localStorage.getItem("teacherActivities");

@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 type Role = "student" | "teacher";
 type Mode = "login" | "register";
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE = "https://edugrade-in.onrender.com";
 
 export default function Login() {
   const { toast } = useToast();
@@ -196,7 +196,7 @@ return (
 
       {/* Subtitle */}
       <p className="text-lg text-cyan-100 opacity-95 leading-tight max-w-xs animate-slideUp">
-        Smart Academic Performance System designed
+        Smart Academic Performance System 
         <br /> for Students &amp; Teachers
       </p>
     </div>

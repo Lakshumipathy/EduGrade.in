@@ -106,7 +106,7 @@ export default function StudentPerformance() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
- const BACKEND_URL = "http://localhost:4000/api/student/performance";
+ const BACKEND_URL = "https://edugrade-in.onrender.com/api/student/performance";
 
 
   const [regNo, setRegNo] = useState("");
@@ -195,7 +195,7 @@ export default function StudentPerformance() {
       setAchievementLoading(true);
 
       const res = await fetch(
-        `http://localhost:4000/api/contributions/achievements?regNo=${regNo}&year=${year}`
+        `https://edugrade-in.onrender.com/api/contributions/achievements?regNo=${regNo}&year=${year}`
       );
       const json = await res.json();
 
@@ -228,7 +228,7 @@ export default function StudentPerformance() {
       setContribLoading(true);
 
       const res = await fetch(
-        `http://localhost:4000/api/contributions/research-internship?regNo=${regNo}&year=${year}`
+        `https://edugrade-in.onrender.com/api/contributions/research-internship?regNo=${regNo}&year=${year}`
 
       );
       const json = await res.json();
@@ -636,6 +636,7 @@ export default function StudentPerformance() {
                   axisLine={{ stroke: '#9ca3af' }}
                 />
                 <YAxis 
+                  domain={[0, 'dataMax + 1']}
                   tick={{ fontSize: 12, fill: '#374151' }}
                   axisLine={{ stroke: '#9ca3af' }}
                 />
@@ -690,11 +691,27 @@ export default function StudentPerformance() {
                 ? "Great start with your first achievement! This is just the beginning - aim for 2-3 more activities this semester to build a strong profile."
                 : "Ready to shine! Start with college-level competitions or hackathons. Even small participations count towards building your achievement portfolio.";
 
+            const getAchievementStars = (t) => {
+              if (t >= 8) return 5;
+              if (t >= 5) return 4;
+              if (t >= 2) return 3;
+              if (t === 1) return 2;
+              return 1;
+            };
+
+            const getAchievementReview = (t) => {
+              if (t >= 8) return "You're an achievement champion with exceptional participation!\nYour dedication to excellence sets you apart from your peers.";
+              if (t >= 5) return "Impressive achievement record showing consistent effort!\nKeep this momentum going to reach even greater heights.";
+              if (t >= 2) return "Good foundation with solid participation in events!\nChallenge yourself with more competitions to boost your profile.";
+              if (t === 1) return "Great first step into the world of achievements!\nThis is just the beginning of your success journey.";
+              return "Your achievement journey awaits - take the first step!\nStart with college events to build confidence and experience.";
+            };
+
             return (
               <div className="mt-6 space-y-4">
-                {/* Star Rating */}
-                <div className="text-xl font-bold">
-                  {"⭐".repeat(stars)}
+                {/* Achievement Stars */}
+                <div className="text-2xl font-bold text-yellow-500">
+                  {"⭐".repeat(getAchievementStars(total))}
                 </div>
 
                 {/* Most Active Month */}
@@ -705,8 +722,8 @@ export default function StudentPerformance() {
                   </span>
                 </div>
 
-                {/* AI Summary */}
-                <p className="text-sm text-muted-foreground">{aiSummary}</p>
+                {/* Achievement Review */}
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{getAchievementReview(total)}</p>
               </div>
             );
           })()}
@@ -794,6 +811,7 @@ export default function StudentPerformance() {
                   axisLine={{ stroke: '#9ca3af' }}
                 />
                 <YAxis 
+                  domain={[0, 'dataMax + 1']}
                   tick={{ fontSize: 12, fill: '#374151' }}
                   axisLine={{ stroke: '#9ca3af' }}
                 />
@@ -869,21 +887,41 @@ export default function StudentPerformance() {
 
             const impactText = getPersonalizedSummary();
 
+            const getContributionStars = (research, internship) => {
+              const total = research + internship;
+              if (research > 0 && internship > 0) return 5;
+              if (total >= 2) return 4;
+              if (total === 1) return 3;
+              return 2;
+            };
+
+            const getContributionReview = (research, internship) => {
+              if (research > 0 && internship > 0) {
+                return "Perfect blend of academic research and industry experience!\nYou're building a well-rounded profile that stands out to employers.";
+              } else if (research > 0) {
+                return `Strong research foundation with ${research} project${research > 1 ? 's' : ''} completed!\nConsider adding internship experience to balance theory with practice.`;
+              } else if (internship > 0) {
+                return `Excellent industry exposure with ${internship} internship${internship > 1 ? 's' : ''} completed!\nResearch projects could add academic depth to your profile.`;
+              } else {
+                return "Your professional journey is about to begin!\nStart with research projects or internships to build valuable experience.";
+              }
+            };
+
             return (
               <div className="mt-6 space-y-4">
-                {/* Stars */}
-                <div className="text-xl font-bold">
-                  {"⭐".repeat(starScore)}
+                {/* Contribution Stars */}
+                <div className="text-2xl font-bold text-yellow-500">
+                  {"⭐".repeat(getContributionStars(totalResearch, totalInternship))}
                 </div>
 
-                {/* Quality Score */}
+                {/* Contribution Counts */}
                 <div className="text-md font-semibold">
-                  Quality Score:{" "}
-                  <span className="text-purple-600">{score}</span>
+                  Research: <span className="text-purple-600">{totalResearch}</span> | 
+                  Internships: <span className="text-cyan-600">{totalInternship}</span>
                 </div>
 
-                {/* Impact Summary */}
-                <p className="text-sm text-muted-foreground">{impactText}</p>
+                {/* Contribution Review */}
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{getContributionReview(totalResearch, totalInternship)}</p>
               </div>
             );
           })()}
