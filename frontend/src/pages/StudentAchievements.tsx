@@ -30,7 +30,7 @@ export default function StudentAchievements() {
     }
 
     try {
-      const res = await fetch(`https://edugrade-in.onrender.com/api/student/achievements/${userId}`);
+      const res = await fetch(`http://localhost:4001/api/student/achievements/${userId}`);
       const json = await res.json();
 
       if (json.achievements) {
@@ -60,7 +60,7 @@ export default function StudentAchievements() {
     if (!confirm("Are you sure you want to delete this achievement?")) return;
     
     try {
-      const res = await fetch(`https://edugrade-in.onrender.com/api/student/achievement/${id}`, {
+      const res = await fetch(`http://localhost:4001/api/student/achievement/${id}`, {
         method: "DELETE"
       });
       
@@ -115,8 +115,8 @@ export default function StudentAchievements() {
 
     try {
       const url = editingId 
-        ? `https://edugrade-in.onrender.com/api/student/achievement/${editingId}`
-        : "https://edugrade-in.onrender.com/api/student/achievement";
+        ? `http://localhost:4001/api/student/achievement/${editingId}`
+        : "http://localhost:4001/api/student/achievement";
       const method = editingId ? "PUT" : "POST";
       
       const res = await fetch(url, {

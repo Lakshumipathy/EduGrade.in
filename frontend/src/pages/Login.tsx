@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 type Role = "student" | "teacher";
 type Mode = "login" | "register";
 
-const API_BASE = "https://edugrade-in.onrender.com";
+const API_BASE = "http://localhost:4001/api";
 
 export default function Login() {
   const { toast } = useToast();
@@ -271,7 +271,7 @@ return (
                 <div className="space-y-2">
                   <Label>Register Number</Label>
                   <Input
-                    placeholder="2117230xxxxx"
+                    
                     value={studentRegNo}
                     onChange={(e) => setStudentRegNo(e.target.value)}
                     required

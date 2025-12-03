@@ -10,4 +10,8 @@ router.get(
   teacherController.getAllResearchInternship
 );
 
+// Dataset management routes
+router.get("/datasets", teacherController.getDatasets);
+router.delete("/datasets/:semester", teacherController.deleteDataset);
+
 module.exports = router;

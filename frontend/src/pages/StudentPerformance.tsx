@@ -106,7 +106,7 @@ export default function StudentPerformance() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
- const BACKEND_URL = "https://edugrade-in.onrender.com/api/student/performance";
+ const BACKEND_URL = "http://localhost:4001/api/student/performance";
 
 
   const [regNo, setRegNo] = useState("");
@@ -195,7 +195,7 @@ export default function StudentPerformance() {
       setAchievementLoading(true);
 
       const res = await fetch(
-        `https://edugrade-in.onrender.com/api/contributions/achievements?regNo=${regNo}&year=${year}`
+        `http://localhost:4001/api/contributions/achievements?regNo=${regNo}&year=${year}`
       );
       const json = await res.json();
 
@@ -228,7 +228,7 @@ export default function StudentPerformance() {
       setContribLoading(true);
 
       const res = await fetch(
-        `https://edugrade-in.onrender.com/api/contributions/research-internship?regNo=${regNo}&year=${year}`
+        `http://localhost:4001/api/contributions/research-internship?regNo=${regNo}&year=${year}`
 
       );
       const json = await res.json();
@@ -521,12 +521,39 @@ export default function StudentPerformance() {
                         </TableCell>
                         <TableCell className="max-w-md">{plan.plan}</TableCell>
                         <TableCell>
-                          <div className="flex flex-wrap gap-2">
-                            {plan.links?.map((link: any, j: number) => (
-                              <a key={j} href={link.url} target="_blank" className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors">
-                                {link.label}
-                              </a>
-                            ))}
+                          <div className="flex flex-col gap-2">
+                            {plan.links?.map((link: any, j: number) => {
+                              const getIcon = (type: string) => {
+                                switch(type) {
+                                  case 'video': return '';
+                                  case 'notes': return '';
+                                  case 'practice': return '';
+                                  default: return '🔗';
+                                }
+                              };
+                              
+                              const getColor = (type: string) => {
+                                switch(type) {
+                                  case 'video': return 'bg-red-100 text-red-700 hover:bg-red-200';
+                                  case 'notes': return 'bg-green-100 text-green-700 hover:bg-green-200';
+                                  case 'practice': return 'bg-purple-100 text-purple-700 hover:bg-purple-200';
+                                  default: return 'bg-blue-100 text-blue-700 hover:bg-blue-200';
+                                }
+                              };
+                              
+                              return (
+                                <a 
+                                  key={j} 
+                                  href={link.url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className={`text-xs px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ${getColor(link.type)}`}
+                                >
+                                  <span>{getIcon(link.type)}</span>
+                                  <span>{link.label}</span>
+                                </a>
+                              );
+                            })}
                           </div>
                         </TableCell>
                       </TableRow>

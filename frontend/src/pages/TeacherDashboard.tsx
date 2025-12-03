@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, CheckCircle, Users, FileText } from "lucide-react";
+import { Upload, CheckCircle, Users, FileText, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Activity {
@@ -16,11 +16,12 @@ export default function TeacherDashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+
   const { toast } = useToast();
 
   const [selectedSemester, setSelectedSemester] = useState("");
 
-  const BACKEND_BASE = "https://edugrade-in.onrender.com";
+  const BACKEND_BASE = "http://localhost:4001";
 
   useEffect(() => {
     const stored = localStorage.getItem("teacherActivities");
@@ -33,6 +34,22 @@ export default function TeacherDashboard() {
       );
     }
   }, []);
+
+  const handleDeleteActivity = (activityId: string) => {
+    if (!confirm('Are you sure you want to delete this activity?')) {
+      return;
+    }
+
+    const activities = JSON.parse(localStorage.getItem("teacherActivities") || "[]") as Activity[];
+    const updatedActivities = activities.filter(activity => activity.id !== activityId);
+    localStorage.setItem("teacherActivities", JSON.stringify(updatedActivities));
+    setRecentActivities(updatedActivities.slice(0, 5));
+
+    toast({
+      title: "Activity deleted",
+      description: "The activity has been removed from your history."
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -97,6 +114,7 @@ export default function TeacherDashboard() {
 
       setFile(null);
       setSelectedSemester("");
+
 
     } catch (error: any) {
       console.error('Upload error:', error);
@@ -226,6 +244,16 @@ export default function TeacherDashboard() {
                       <p className="text-slate-600">
                         {new Date(activity.timestamp).toLocaleString()}
                       </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleDeleteActivity(activity.id)}
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}

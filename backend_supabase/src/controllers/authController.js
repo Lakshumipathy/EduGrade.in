@@ -6,27 +6,26 @@ const SALT_ROUNDS = 10;
 /* ---------- STUDENT REGISTER ---------- */
 async function registerStudent(req, res) {
   try {
+    console.log("Student registration request received:", req.body);
     const { regNo, email, password } = req.body;
 
     if (!regNo || !email || !password) {
+      console.log("Missing required fields");
       return res.status(400).json({ error: "regNo, email and password are required" });
     }
 
-    // Student must exist in main students dataset
-    const { data: studentRows } = await supabase
-      .from("students")
-      .select("reg_no")
-      .eq("reg_no", regNo);
-
-    if (!studentRows || studentRows.length === 0) {
-      return res.status(404).json({ error: "Student register number not found" });
-    }
+    // Allow any student to register (removed dataset requirement)
 
     // Check duplicate
-    const { data: existingRows } = await supabase
+    const { data: existingRows, error: selectError } = await supabase
       .from("student_auth")
       .select("reg_no")
       .eq("reg_no", regNo);
+
+    if (selectError) {
+      console.error("Supabase select error:", selectError);
+      return res.status(500).json({ error: "Database error" });
+    }
 
     if (existingRows && existingRows.length > 0) {
       return res.status(400).json({ error: "Account already exists for this register number" });
@@ -41,11 +40,17 @@ async function registerStudent(req, res) {
     });
 
     if (insertErr) {
-      return res.status(500).json({ error: "Failed to create student account" });
+      console.error("Supabase insert error:", insertErr);
+      if (insertErr.message.includes('relation "student_auth" does not exist')) {
+        return res.status(500).json({ error: "Database tables not created. Please run the SQL migrations in your Supabase dashboard." });
+      }
+      return res.status(500).json({ error: `Database error: ${insertErr.message}` });
     }
 
+    console.log("Student registered successfully:", regNo);
     return res.json({ message: "Student registered successfully", regNo, email });
   } catch (err) {
+    console.error("Registration error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 }
@@ -53,18 +58,25 @@ async function registerStudent(req, res) {
 /* ---------- STUDENT LOGIN ---------- */
 async function loginStudent(req, res) {
   try {
+    console.log("Student login request received:", req.body);
     const { regNo, password } = req.body;
 
     if (!regNo || !password) {
+      console.log("Missing regNo or password");
       return res.status(400).json({ error: "regNo and password are required" });
     }
 
     console.log("Login attempt for regNo:", regNo);
 
-    const { data: rows } = await supabase
+    const { data: rows, error: selectError } = await supabase
       .from("student_auth")
       .select("*")
       .eq("reg_no", regNo);
+
+    if (selectError) {
+      console.error("Supabase select error:", selectError);
+      return res.status(500).json({ error: "Database error" });
+    }
 
     console.log("Found student_auth rows:", rows?.length || 0);
 
@@ -79,6 +91,7 @@ async function loginStudent(req, res) {
       return res.status(400).json({ error: "Invalid register number or password" });
     }
 
+    console.log("Login successful for:", regNo);
     return res.json({
       role: "student",
       regNo: user.reg_no,

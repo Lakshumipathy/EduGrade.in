@@ -20,27 +20,112 @@ const SUBJECT_LABELS = {
  * They’re all valid URLs (YouTube + general web resources).
  */
 function buildResources(code, name) {
-  const base = `${name}`.trim();
+  const resourceMap = {
+    "MA23111": {
+      youtube: {
+        label: "YouTube lecture",
+        url: "https://www.youtube.com/watch?v=L3LMbpZIKhQ&list=PLBlnK6fEyqRhqJPDXcvYlLfXPh37L89g3"
+      },
+      notes: {
+        label: "Concept notes",
+        url: "https://www.khanacademy.org/computing/computer-science/algorithms"
+      },
+      practice: {
+        label: "Practice problems",
+        url: "https://brilliant.org/courses/discrete-mathematics/"
+      }
+    },
+    "AL23311": {
+      youtube: {
+        label: "YouTube lecture",
+        url: "https://www.youtube.com/watch?v=PPLop4L2eGk&list=PLLssT5z_DsK-h9vYZkQkYNWcItqhlRJLN"
+      },
+      notes: {
+        label: "Concept notes",
+        url: "https://www.coursera.org/learn/machine-learning"
+      },
+      practice: {
+        label: "Practice problems",
+        url: "https://www.kaggle.com/learn"
+      }
+    },
+    "CS23411": {
+      youtube: {
+        label: "YouTube lecture",
+        url: "https://www.youtube.com/watch?v=HXV3zeQKqGY&list=PLrjkTql3jnm-CLxHftqLgkrZbM8fUt0vn"
+      },
+      notes: {
+        label: "Concept notes",
+        url: "https://www.w3schools.com/sql/"
+      },
+      practice: {
+        label: "Practice problems",
+        url: "https://sqlbolt.com/"
+      }
+    },
+    "CS23312": {
+      youtube: {
+        label: "YouTube lecture",
+        url: "https://www.youtube.com/watch?v=xk4_1vDrzzo&list=PLsyeobzWxl7pe_IiTfNyr55kwJPWbgxB5"
+      },
+      notes: {
+        label: "Concept notes",
+        url: "https://docs.oracle.com/javase/tutorial/"
+      },
+      practice: {
+        label: "Practice problems",
+        url: "https://www.codecademy.com/learn/learn-java"
+      }
+    },
+    "EC23331": {
+      youtube: {
+        label: "YouTube lecture",
+        url: "https://www.youtube.com/watch?v=M0mx8S05v60&list=PLBlnK6fEyqRjMH3mWf6kwqiTbT798eAOm"
+      },
+      notes: {
+        label: "Concept notes",
+        url: "https://www.tutorialspoint.com/digital_circuits/index.htm"
+      },
+      practice: {
+        label: "Practice problems",
+        url: "https://circuitverse.org/"
+      }
+    }
+  };
 
+  const defaultResources = {
+    youtube: {
+      label: "YouTube lecture",
+      url: "https://www.khanacademy.org/"
+    },
+    notes: {
+      label: "Concept notes",
+      url: "https://ocw.mit.edu/"
+    },
+    practice: {
+      label: "Practice problems",
+      url: "https://www.edx.org/"
+    }
+  };
+
+  const resources = resourceMap[code] || defaultResources;
+  
   return [
     {
-      label: "YouTube lecture",
-      url:
-        "https://www.youtube.com/results?search_query=" +
-        encodeURIComponent(base + " lecture"),
+      label: resources.youtube.label,
+      url: resources.youtube.url,
+      type: "video"
     },
     {
-      label: "Concept notes",
-      url:
-        "https://www.google.com/search?q=" +
-        encodeURIComponent(base + " notes tutorial"),
+      label: resources.notes.label,
+      url: resources.notes.url,
+      type: "notes"
     },
     {
-      label: "Practice problems",
-      url:
-        "https://www.google.com/search?q=" +
-        encodeURIComponent(base + " practice problems"),
-    },
+      label: resources.practice.label,
+      url: resources.practice.url,
+      type: "practice"
+    }
   ];
 }
 
